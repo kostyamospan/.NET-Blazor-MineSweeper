@@ -1,0 +1,60 @@
+﻿.minesweeper-main {
+    width: 500px;
+    margin: 0 auto;
+    /*background-color: blue;*/
+}
+
+.head {
+    width: 100%;
+    height: 200px;
+    background-color: aqua;
+}
+
+.field-grid {
+    display: grid;
+    background-color: #9b9b9b;
+    height: 500px;
+    width: 100%;
+}
+
+.cells-c10 {
+    grid-template-columns: repeat(10, auto);
+    grid-template-rows: repeat(10, auto);
+    grid-gap: 3px;
+}
+
+.cell {
+    padding: 0;
+    border-width: 0;
+    appearance: none;
+    position: relative;
+}
+
+.cell-top {
+    width: 100%;
+    height: 100%;
+    /*position: absolute;*/
+    border-radius: 3px;
+    background: #e0e0e0;
+    box-shadow: inset -4px -4px 0 #5a5a5a,
+    inset 4px 4px 0 #ffffff;
+    transition: 100ms;
+    z-index: 99999;
+}
+
+.cell:active > .cell-top {
+    visibility: hidden;
+}
+
+
+.cell-bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 99998;
+}
+
+
