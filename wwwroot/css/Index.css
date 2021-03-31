@@ -34,6 +34,12 @@
     font-size: 2em;
 }
 
+.cell-bottom.d-1 {
+    color: transparent;
+    background: url("../img/svg/mine.svg") !important;
+    background-size: cover !important;
+}
+
 .cell-bottom.d0 {
     color: transparent;
 }
@@ -63,17 +69,6 @@
 }
 
 
-.cell-top {
-    width: 100%;
-    height: 100%;
-    border-radius: 3px;
-    background: #e0e0e0;
-    box-shadow: inset -4px -4px 0 #5a5a5a,
-    inset 4px 4px 0 #ffffff;
-    transition: 100ms;
-    z-index: 99999;
-}
-
 .hidden {
     visibility: hidden;
 }
@@ -82,9 +77,8 @@
     visibility: visible;
 }
 
-
 .cell:active > * {
-    visibility: hidden;
+    background: url("../img/svg/cell_opened.svg");
 }
 
 .cell:focus {
@@ -100,9 +94,21 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    z-index: 99998;
+    top: 0;
+    background-size: cover !important;
 }
 
+.cell-bottom.flagged {
+    background: url("../img/svg/cell_flaged.svg") !important;
+    background-size: cover !important;
+}
 
+.cell-bottom.closed {
+    background: url("../img/svg/cell_closed.svg");
+}
+
+.cell-bottom.opened {
+    background: url("../img/svg/cell_opened.svg");
+}
 
 

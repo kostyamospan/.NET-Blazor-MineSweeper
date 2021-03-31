@@ -11,11 +11,11 @@ namespace BlazorMinesweeper.Pages
 
         private int _bombsCount = 10;
 
-        protected int _flagsLeft = 10;
+        protected int FlagsLeft { get; private set; } = 10;
 
-        protected bool isGameOver = false;
+        protected bool IsGameOver { get; private set; } = false;
 
-        protected CellModel[][] _gridValues;
+        protected CellModel[][] GridValues { get; private set; }
 
         public IndexBase()
         {
@@ -28,13 +28,13 @@ namespace BlazorMinesweeper.Pages
 
         protected override void OnInitialized()
         {
-            foreach (var item in _gridValues)
-            {
-                foreach (var i in item)
-                    Console.Write("{0,-3}", i.Value);
-
-                Console.WriteLine();
-            }
+            // foreach (var item in _gridValues)
+            // {
+            //     foreach (var i in item)
+            //         Console.Write("{0,-3}", i.Value);
+            //
+            //     Console.WriteLine();
+            // }
         }
 
         protected void OnCellLeftBtnClicked(MouseEventArgs ev, (int x, int y) btnPosition)
@@ -44,17 +44,35 @@ namespace BlazorMinesweeper.Pages
             StateHasChanged();
         }
 
+        protected void OnCellRightBtnClicked(MouseEventArgs ev, (int iCur, int jCur) btnPosition)
+        {
+            var (x, y) = btnPosition;
+
+            var cell = GridValues[x][y];
+
+            if (cell.IsOpened) return;
+
+            if (cell.IsChecked)
+                FlagsLeft++;
+            else
+                FlagsLeft--;
+
+            cell.IsChecked = !cell.IsChecked;
+
+            StateHasChanged();
+        }
+
         private void OpenCell((int x, int y) btnPosition)
         {
             var (i, j) = btnPosition;
 
-            var cell = _gridValues[i][j];
+            var cell = GridValues[i][j];
 
             if (cell.IsOpened || cell.IsChecked)
                 return;
 
             if (cell.Value == -1)
-                isGameOver = true;
+                IsGameOver = true;
 
             if (cell.Value == 0)
                 OpenSurroundingCellsRecursive(btnPosition);
@@ -67,10 +85,10 @@ namespace BlazorMinesweeper.Pages
         {
             var (x, y) = btnPosition;
 
-            if (!IsBounds(x, y, _gridValues) || _gridValues[x][y].IsOpened)
+            if (!IsBounds(x, y, GridValues) || GridValues[x][y].IsOpened)
                 return;
 
-            var cell = _gridValues[x][y];
+            var cell = GridValues[x][y];
 
             if (cell.Value != -1 && cell.Value != 0)
             {
@@ -80,12 +98,16 @@ namespace BlazorMinesweeper.Pages
 
             cell.IsOpened = true;
 
-            OpenSurroundingCellsRecursive((x - 1, y));
-            OpenSurroundingCellsRecursive((x + 1, y));
 
-            OpenSurroundingCellsRecursive((x, y - 1));
-            // ReSharper disable once TailRecursiveCall
-            OpenSurroundingCellsRecursive((x, y + 1));
+            for (int i = x - 1; i <= x + 1; i++)
+            {
+                for (int j = y - 1; j <= y + 1; j++)
+                {
+                    if (i == x && j == y) continue;
+
+                    OpenSurroundingCellsRecursive((i, j));
+                }
+            }
         }
 
         private static bool IsBounds<T>(int i, int j, T[][] collection)
@@ -95,14 +117,14 @@ namespace BlazorMinesweeper.Pages
 
         private void InitializeGridValuesList()
         {
-            _gridValues = new CellModel[_gridSize][];
+            GridValues = new CellModel[_gridSize][];
 
-            for (int i = 0; i < _gridValues.Length; i++)
+            for (int i = 0; i < GridValues.Length; i++)
             {
-                _gridValues[i] = new CellModel[_gridSize];
+                GridValues[i] = new CellModel[_gridSize];
 
-                for (int j = 0; j < _gridValues[i].Length; j++)
-                    _gridValues[i][j] = new CellModel();
+                for (int j = 0; j < GridValues[i].Length; j++)
+                    GridValues[i][j] = new CellModel();
             }
         }
 
@@ -111,23 +133,24 @@ namespace BlazorMinesweeper.Pages
             for (int i = 0; i < _gridSize; i++)
             {
                 int xCoord = 0, yCoord = 0;
+
                 do
                 {
                     xCoord = GenerateValue(max: _gridSize);
                     yCoord = GenerateValue(max: _gridSize);
-                } while (_gridValues[xCoord][yCoord].Value == -1);
+                } while (GridValues[xCoord][yCoord].Value == -1);
 
-                _gridValues[xCoord][yCoord].Value = -1;
+                GridValues[xCoord][yCoord].Value = -1;
             }
         }
 
         private void CellCountBombsAround()
         {
-            for (int i = 0; i < _gridValues.Length; i++)
+            for (int i = 0; i < GridValues.Length; i++)
             {
-                for (int j = 0; j < _gridValues[i].Length; j++)
+                for (int j = 0; j < GridValues[i].Length; j++)
                 {
-                    if (_gridValues[i][j].Value == -1) continue;
+                    if (GridValues[i][j].Value == -1) continue;
 
                     int bombsAround = 0;
 
@@ -135,15 +158,15 @@ namespace BlazorMinesweeper.Pages
                     {
                         for (int d = j - 1; d <= j + 1; d++)
                         {
-                            if (IsBounds(c, d, _gridValues))
+                            if (IsBounds(c, d, GridValues))
                             {
-                                if (_gridValues[c][d].Value == -1)
+                                if (GridValues[c][d].Value == -1)
                                     bombsAround++;
                             }
                         }
                     }
 
-                    _gridValues[i][j].Value = bombsAround;
+                    GridValues[i][j].Value = bombsAround;
                 }
             }
         }
