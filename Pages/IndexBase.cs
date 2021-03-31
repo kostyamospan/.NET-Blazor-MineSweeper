@@ -1,4 +1,5 @@
 ﻿using System;
+using BlazorMinesweeper.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -12,7 +13,9 @@ namespace BlazorMinesweeper.Pages
 
         protected int _flagsLeft = 10;
 
-        private int[][] _gridValues;
+        protected bool isGameOver = false;
+
+        protected CellModel[][] _gridValues;
 
         public IndexBase()
         {
@@ -28,7 +31,7 @@ namespace BlazorMinesweeper.Pages
             foreach (var item in _gridValues)
             {
                 foreach (var i in item)
-                    Console.Write("{0,-3}", i);
+                    Console.Write("{0,-3}", i.Value);
 
                 Console.WriteLine();
             }
@@ -36,7 +39,53 @@ namespace BlazorMinesweeper.Pages
 
         protected void OnCellLeftBtnClicked(MouseEventArgs ev, (int x, int y) btnPosition)
         {
-            Console.WriteLine($"X:{btnPosition.x}, Y:{btnPosition.y}");
+            OpenCell(btnPosition);
+
+            StateHasChanged();
+        }
+
+        private void OpenCell((int x, int y) btnPosition)
+        {
+            var (i, j) = btnPosition;
+
+            var cell = _gridValues[i][j];
+
+            if (cell.IsOpened || cell.IsChecked)
+                return;
+
+            if (cell.Value == -1)
+                isGameOver = true;
+
+            if (cell.Value == 0)
+                OpenSurroundingCellsRecursive(btnPosition);
+
+
+            cell.IsOpened = true;
+        }
+
+        private void OpenSurroundingCellsRecursive((int x, int y) btnPosition)
+        {
+            var (x, y) = btnPosition;
+
+            if (!IsBounds(x, y, _gridValues) || _gridValues[x][y].IsOpened)
+                return;
+
+            var cell = _gridValues[x][y];
+
+            if (cell.Value != -1 && cell.Value != 0)
+            {
+                cell.IsOpened = true;
+                return;
+            }
+
+            cell.IsOpened = true;
+
+            OpenSurroundingCellsRecursive((x - 1, y));
+            OpenSurroundingCellsRecursive((x + 1, y));
+
+            OpenSurroundingCellsRecursive((x, y - 1));
+            // ReSharper disable once TailRecursiveCall
+            OpenSurroundingCellsRecursive((x, y + 1));
         }
 
         private static bool IsBounds<T>(int i, int j, T[][] collection)
@@ -46,10 +95,15 @@ namespace BlazorMinesweeper.Pages
 
         private void InitializeGridValuesList()
         {
-            _gridValues = new int[_gridSize][];
+            _gridValues = new CellModel[_gridSize][];
 
             for (int i = 0; i < _gridValues.Length; i++)
-                _gridValues[i] = new int[_gridSize];
+            {
+                _gridValues[i] = new CellModel[_gridSize];
+
+                for (int j = 0; j < _gridValues[i].Length; j++)
+                    _gridValues[i][j] = new CellModel();
+            }
         }
 
         private void GenerateGridBombs()
@@ -61,9 +115,9 @@ namespace BlazorMinesweeper.Pages
                 {
                     xCoord = GenerateValue(max: _gridSize);
                     yCoord = GenerateValue(max: _gridSize);
-                } while (_gridValues[xCoord][yCoord] == -1);
+                } while (_gridValues[xCoord][yCoord].Value == -1);
 
-                _gridValues[xCoord][yCoord] = -1;
+                _gridValues[xCoord][yCoord].Value = -1;
             }
         }
 
@@ -73,8 +127,8 @@ namespace BlazorMinesweeper.Pages
             {
                 for (int j = 0; j < _gridValues[i].Length; j++)
                 {
-                    if(_gridValues[i][j] == -1) continue;
-                    
+                    if (_gridValues[i][j].Value == -1) continue;
+
                     int bombsAround = 0;
 
                     for (int c = i - 1; c <= i + 1; c++)
@@ -83,13 +137,13 @@ namespace BlazorMinesweeper.Pages
                         {
                             if (IsBounds(c, d, _gridValues))
                             {
-                                if (_gridValues[c][d] == -1)
+                                if (_gridValues[c][d].Value == -1)
                                     bombsAround++;
                             }
                         }
                     }
 
-                    _gridValues[i][j] = bombsAround;
+                    _gridValues[i][j].Value = bombsAround;
                 }
             }
         }

@@ -1,7 +1,6 @@
 ﻿.minesweeper-main {
     width: 500px;
     margin: 0 auto;
-    /*background-color: blue;*/
 }
 
 .head {
@@ -30,10 +29,43 @@
     position: relative;
 }
 
+.cell * {
+    font-family: 'PressStart2P', monospace;
+    font-size: 2em;
+}
+
+.cell-bottom.d0 {
+    color: transparent;
+}
+.cell-bottom.d1 {
+    color: blue;
+}
+.cell-bottom.d2 {
+    color: darkgreen;
+}
+.cell-bottom.d3 {
+    color: red;
+}
+.cell-bottom.d4 {
+    color: #1f00ff;
+}
+.cell-bottom.d5 {
+    color: #8c0000;
+}
+.cell-bottom.d6 {
+    color: #004008;
+}
+.cell-bottom.d7 {
+    color: #004791;
+}
+.cell-bottom.d8 {
+    color: #621313;
+}
+
+
 .cell-top {
     width: 100%;
     height: 100%;
-    /*position: absolute;*/
     border-radius: 3px;
     background: #e0e0e0;
     box-shadow: inset -4px -4px 0 #5a5a5a,
@@ -42,8 +74,22 @@
     z-index: 99999;
 }
 
-.cell:active > .cell-top {
+.hidden {
     visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
+}
+
+
+.cell:active > * {
+    visibility: hidden;
+}
+
+.cell:focus {
+    outline: none;
+    box-shadow: none;
 }
 
 
@@ -56,5 +102,7 @@
     position: absolute;
     z-index: 99998;
 }
+
+
 
 
