@@ -1,0 +1,35 @@
+﻿@page "/"
+@using System.Security.Principal
+@using System.Linq.Expressions
+@inherits IndexBase
+
+
+<div class="minesweeper-main">
+    <div class="head">
+
+    </div>
+    <div class="field-grid cells-c@(_gridSize)">
+        @for (var i = 0; i < _gridSize; i++)
+        {
+            for (int j = 0; j < _gridSize; j++)
+            {
+                var iCur = i;
+                var jCur = j;
+                var curCell = GridValues[i][j];
+
+                <button class="cell"
+                        @onclick="@((ev) => OnCellLeftBtnClicked(ev, (iCur, jCur)))"
+                        @oncontextmenu="@((ev) => OnCellRightBtnClicked(ev, (iCur, jCur)))"
+                        @oncontextmenu:preventDefault="true">
+
+
+                    <div class="cell-bottom @(curCell.IsOpened ? curCell.CssClass : "")
+                                        @(curCell.IsOpened ? "opened" : "closed")
+                                        @(curCell.IsChecked ? "flagged" : "")">
+                        @(curCell.IsOpened ? curCell.Value : "")
+                    </div>
+                </button>
+            }
+        }
+    </div>
+</div>
