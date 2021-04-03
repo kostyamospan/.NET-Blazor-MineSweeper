@@ -6,20 +6,22 @@
 
 <div class="minesweeper-main">
     <div class="head">
-
+        <div class="flags-count">@*<div class="background-text">000</div>*@ @FlagsLeft</div>
+        <div class="play-btn" @onclick="@OnPlayBtnPressed">@(IsGameLost ? ":(" : IsGameWin ? "^_^" : ":)") </div>
+        <div class="clock">@*<div class="background-text">000</div>*@123</div>
     </div>
-    <div class="field-grid cells-c@(_gridSize)">
-        @for (var i = 0; i < _gridSize; i++)
+    <div class="field-grid cells-c@(GridSize)">
+        @for (var i = 0; i < GridSize; i++)
         {
-            for (int j = 0; j < _gridSize; j++)
+            for (int j = 0; j < GridSize; j++)
             {
                 var iCur = i;
                 var jCur = j;
                 var curCell = GridValues[i][j];
 
                 <button class="cell"
-                        @onclick="@((ev) => OnCellLeftBtnClicked(ev, (iCur, jCur)))"
-                        @oncontextmenu="@((ev) => OnCellRightBtnClicked(ev, (iCur, jCur)))"
+                        @onclick="@(IsGameLost || IsGameWin ? (ev) => { } : (ev) => OnCellLeftBtnClicked(ev, (iCur, jCur)))"
+                        @oncontextmenu="@(IsGameLost || IsGameWin ? (ev) => { } : (ev) => OnCellRightBtnClicked(ev, (iCur, jCur)))"
                         @oncontextmenu:preventDefault="true">
 
 

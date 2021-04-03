@@ -2,7 +2,13 @@
     font-family: PressStart2P;
     src: url('../fonts/PressStart2P-Regular.ttf');
 }
-* { 
+
+@font-face {
+    font-family: Digital7;
+    src: url('../fonts/Digital7-Regular.ttf');
+}
+
+* {
     user-select: none;
 }
 

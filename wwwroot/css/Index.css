@@ -4,10 +4,56 @@
 }
 
 .head {
+    box-sizing: border-box;
+    padding: 0 20px;
     width: 100%;
-    height: 200px;
-    background-color: aqua;
+    height: 150px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    background-color: grey;
+    justify-content: space-between;
+    align-items: center;
+    /*background-color: aqua;*/
 }
+.head > * {
+    position: relative;
+    background-color: darkgray;
+    font-family: 'Digital7', monospace;
+    font-size: 5em;
+    color: red;
+    text-align: center;
+    height: 80px;
+}
+
+/*.head .background-text {*/
+/*    color: #4C0000;*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    bottom: 0;*/
+/*    right: 0;*/
+/*    z-index: -1;*/
+/*    overflow: hidden;*/
+/*}*/
+.head .flags-count {
+    /*background-color: da;*/
+    width: 150px ;
+    /*height: 80px;*/
+    /*object-fit: contain;*/
+}
+
+.head .play-btn {
+    /*background-color: yellow;*/
+    width: 80px;
+}
+
+.head .clock {
+    /*background-color: red;*/
+    width: 150px;
+    /*height: 80px;*/
+}
+
 
 .field-grid {
     display: grid;
